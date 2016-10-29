@@ -5,6 +5,7 @@ import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 import com.example.tainguyen.trafficmap.GoogleDirection.ApiCallback;
 import com.example.tainguyen.trafficmap.GoogleDirection.Directions;
 import com.example.tainguyen.trafficmap.GoogleDirection.GoogleDirection;
+import com.example.tainguyen.trafficmap.Util.CheckRoute;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -38,10 +40,15 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import static android.icu.text.DisplayContext.LENGTH_SHORT;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ApiCallback, SensorEventListener {
@@ -123,15 +130,34 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             for (Directions.Leg leg : route.legs) {
                 for (Directions.Leg.Step step : leg.steps) {
                     for (int i = 0; i < 10; i++) {
-                        double randlat = random.nextFloat() * 0.1 + step.start_location.getLat();
-                        double randlong = random.nextFloat() * 0.1 + step.start_location.getLng();
+                        double randlat = (random.nextFloat() - 0.5)*0.01 + step.start_location.getLat();
+                        double randlong = (random.nextFloat() - 0.5)*0.01 + step.start_location.getLng();
                         LatLng temp = new LatLng(randlat,randlong);
                         res.add(temp);
                     }
                 }
             }
         }
+        ArrayList<LatLng> ans = new ArrayList<>();
+//        Toast.makeText(this, String.valueOf(result.routes[0].report),Toast.LENGTH_SHORT).show();
 
+        Polyline line = null;
+        LatLng northEast = result.routes[0].
+        Log.d("log routes", "" + result.routes.length);
+        for (int i = 0; i < result.routes.length; i++) {
+            ans.addAll(CheckRoute.countReportOnRoute(result.routes[i],res));
+            for (Directions.Leg leg : result.routes[i].legs) {
+                for (Directions.Leg.Step step : leg.steps){
+                    line = mMap.addPolyline(new PolylineOptions().add(new LatLng(step.start_location.getLat(), step.start_location.getLng())
+                            , new LatLng(step.end_location.getLat(), step.end_location.getLng())).width(5).color(Color.RED));
+                }
+            }
+        }
+
+        Marker marker = null;
+        for (LatLng p : ans) {
+            marker = mMap.addMarker(new MarkerOptions().position(p));
+        }
     }
 
     public void gotoMyLocation() {
@@ -193,36 +219,49 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     double last_X = -1;
     double last_Y = -1;
     double last_Z = -1;
-    double delta_X = -1;
-    double delta_Y = -1;
-    double delta_Z = -1;
+    double delta_X = 0;
+    double delta_Y = 0;
+    double delta_Z = 0;
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        Toast.makeText(this,"start listen",Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"start listen",Toast.LENGTH_SHORT).show();
 
         if (sensorEvent.sensor.getType() ==  Sensor.TYPE_ACCELEROMETER){
+            //Toast.makeText(this,"small shake" + delta_X +" "+ delta_Y+ " " + delta_Z,Toast.LENGTH_SHORT).show();
+
             if (last_X == -1 && last_Y == -1 && last_Z == -1){
                 last_X = sensorEvent.values[0];
-                last_Y = sensorEvent.values[0];
-                last_Z = sensorEvent.values[0];
+                last_Y = sensorEvent.values[1];
+                last_Z = sensorEvent.values[2];
                 return ;
             }
             long now = System.currentTimeMillis();
             long dif = now - lastTime;
             double cur_X = sensorEvent.values[0];
-            double cur_Y = sensorEvent.values[0];
-            double cur_Z = sensorEvent.values[0];
-            delta_X += (cur_X -last_X);
-            delta_Y += (cur_Y -last_Y);
-            delta_Z += (cur_Z -last_Z);
+            double cur_Y = sensorEvent.values[1];
+            double cur_Z = sensorEvent.values[2];
+            delta_X += Math.abs(cur_X - last_X);
+            delta_Y += Math.abs(cur_Y - last_Y);
+            delta_Z += Math.abs(cur_Z - last_Z);
+            //Log.d("acc","x"+delta_X + " curX=" +cur_X);
+            //Log.d("acc","y"+delta_X + " curY=" +cur_X);
+            //Log.d("acc",String.valueOf((delta_X + delta_Y +delta_Z)/dif));
 
-            if (dif >= 2000 && delta_X + delta_Y +delta_Z > 15){
+            if (dif >= 2000 ){
+                if ((delta_X + delta_Y +delta_Z)/dif > 0.25) {
+                    //send request.
+                    Toast.makeText(this, "Shake", Toast.LENGTH_SHORT).show();
+                    mSensorManager.unregisterListener(this,sensorEvent.sensor);
+                }
                 lastTime = now;
                 delta_X = 0;
                 delta_Y = 0;
                 delta_Z = 0;
-                Toast.makeText(this,"Shake",Toast.LENGTH_SHORT).show();
             }
+            last_X = cur_X;
+            last_Y = cur_Y;
+            last_Z = cur_Z;
+
         }
 
     }

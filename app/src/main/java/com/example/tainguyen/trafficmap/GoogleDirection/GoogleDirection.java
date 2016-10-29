@@ -29,7 +29,7 @@ public class GoogleDirection {
         @Override
         protected Directions doInBackground(Void... voids) {
             try {
-                URL url = new URL(URLBuilder.getURL("Ben%20xe%20mien%20dong","Hoc%20Mon"));
+                URL url = new URL(URLBuilder.getURL("10.772805,106.698470","Hoc%20Mon"));
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 InputStreamReader streamReader = new InputStreamReader(conn.getInputStream());
                 BufferedReader reader = new BufferedReader(streamReader);
