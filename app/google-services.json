@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "631740630594",
+    "firebase_url": "https://trafficjammap.firebaseio.com",
+    "project_id": "trafficjammap",
+    "storage_bucket": "trafficjammap.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:631740630594:android:80fd6e14e1da4e06",
+        "android_client_info": {
+          "package_name": "com.trafficjammap"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "631740630594-782v92oj76kd060o6n4kpmno9c6i0tt3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDF8hQtoNtg8J-wlMfmvHMP3ko7V1OVpXs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<<<<<<< HEAD
+    package="com.trafficjammap">
+=======
     package="com.example.tainguyen.trafficmap">
+>>>>>>> 935873f93d12f96e8bfeb0f9ccea6138db2f191e
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -12,6 +16,14 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
 
+<<<<<<< HEAD
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher_app"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+=======
 
     <application
         android:allowBackup="true"
@@ -23,6 +35,7 @@
             android:value="AIzaSyAlF7iV1TtZAiLFwCY8TtKvg55L9QfO-JI"/>
         <meta-data android:name ="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
+>>>>>>> 935873f93d12f96e8bfeb0f9ccea6138db2f191e
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,6 +43,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+<<<<<<< HEAD
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDYWgsvW3sSgzY0iZnyE01Wb6JjrmGVzL4"/>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version"/>
+=======
+>>>>>>> 935873f93d12f96e8bfeb0f9ccea6138db2f191e
     </application>
 
 </manifest>

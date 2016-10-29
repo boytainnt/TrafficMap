@@ -1,12 +1,21 @@
 apply plugin: 'com.android.application'
 
 android {
+<<<<<<< HEAD
+    compileSdkVersion 24
+    buildToolsVersion "25.0.0"
+    defaultConfig {
+        applicationId "com.trafficjammap"
+        minSdkVersion 19
+        targetSdkVersion 24
+=======
     compileSdkVersion 23
     buildToolsVersion "24.0.3"
     defaultConfig {
         applicationId "com.example.tainguyen.trafficmap"
         minSdkVersion 19
         targetSdkVersion 21
+>>>>>>> 935873f93d12f96e8bfeb0f9ccea6138db2f191e
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -20,6 +29,26 @@ android {
 }
 
 dependencies {
+<<<<<<< HEAD
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.google.maps.android:android-maps-utils:0.4+'
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    testCompile 'junit:junit:4.12'
+    compile 'com.google.android.gms:play-services:9.8.0'
+    compile 'com.google.firebase:firebase-core:9.8.0'
+    compile 'com.github.clans:fab:1.6.4'
+    compile 'com.google.firebase:firebase-storage:9.8.0'
+    compile 'com.google.firebase:firebase-auth:9.8.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.google.maps:google-maps-services:0.1.16'
+
+}
+
+apply plugin: 'com.google.gms.google-services'
+=======
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -31,3 +60,4 @@ dependencies {
     compile 'com.google.android.gms:play-services:9.8.0'
     compile 'com.google.maps:google-maps-services:0.1.16'
 }
+>>>>>>> 935873f93d12f96e8bfeb0f9ccea6138db2f191e

@@ -1,4 +1,8 @@
 <resources>
+<<<<<<< HEAD
+    <string name="app_name">TrafficJamMap</string>
+=======
     <string name="app_name">TrafficMap</string>
     <string name="map_api_key">AIzaSyAlF7iV1TtZAiLFwCY8TtKvg55L9QfO-JI</string>
+>>>>>>> 935873f93d12f96e8bfeb0f9ccea6138db2f191e
 </resources>
