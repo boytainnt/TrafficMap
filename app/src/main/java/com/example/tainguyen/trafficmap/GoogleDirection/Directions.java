@@ -1,5 +1,10 @@
 package com.example.tainguyen.trafficmap.GoogleDirection;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Polyline;
+
+import java.util.ArrayList;
+
 /**
  * Created by Tai Nguyen on 10/29/2016.
  */
@@ -20,7 +25,7 @@ public final class Directions {
 
     public static final class Route {
         public final Leg legs[];
-        public int report = 0;
+        public ArrayList<LatLng> reportList = new ArrayList<>();
 
         public Leg[] getLegs() {
             return legs;
@@ -102,12 +107,25 @@ public final class Directions {
 
         }
 
+        public static final class Polyline {
+            public final String points;
+
+            public String getPoints() {
+                return points;
+            }
+
+            public Polyline(String points) {
+                this.points = points;
+            }
+        }
+
         public static final class Step {
             public final End_location end_location;
             public final String html_instructions;
             public final Start_location start_location;
             public final String travel_mode;
             public final String maneuver;
+            public final Polyline polyline;
 
 
             public End_location getEnd_location() {
@@ -133,12 +151,17 @@ public final class Directions {
                 return maneuver;
             }
 
-            public Step(End_location end_location, String html_instructions, Start_location start_location, String travel_mode, String maneuver){
+            public Polyline getPolyline(){
+                return polyline;
+            }
+
+            public Step(End_location end_location, String html_instructions, Start_location start_location, String travel_mode, String maneuver, Polyline polyline){
                 this.end_location = end_location;
                 this.html_instructions = html_instructions;
                 this.start_location = start_location;
                 this.travel_mode = travel_mode;
                 this.maneuver = maneuver;
+                this.polyline = polyline;
             }
         }
     }

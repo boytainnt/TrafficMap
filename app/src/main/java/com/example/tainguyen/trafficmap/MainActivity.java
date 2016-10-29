@@ -43,12 +43,16 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.PolyUtil;
 
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import static android.icu.text.DisplayContext.LENGTH_SHORT;
+import static com.example.tainguyen.trafficmap.R.id.map;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ApiCallback, SensorEventListener {
@@ -60,6 +64,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     private SensorManager mSensorManager;
     private Sensor mSensor;
+    ArrayList<Directions.Route> route;
 
     List<Marker> markers = new ArrayList<>();
 
@@ -72,7 +77,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(map);
         mapFragment.getMapAsync(this);
 
         if (servicesOK()) {
@@ -91,7 +96,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
 
 
@@ -100,8 +105,43 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
         mMap.setMyLocationEnabled(true);
+        mMap.setTrafficEnabled(true);
+        googleMap.setOnPolylineClickListener(new GoogleMap.OnPolylineClickListener()
+        {
 
+            @Override
+            public void onPolylineClick(Polyline polyline)
+            {
+                List<LatLng> points = polyline.getPoints();
+                LatLng start = points.get(0);
+                LatLng end = points.get(points.size()-1);
 
+                Double circumferenceOfEarthInMeters = 2 * Math.PI * 6371000;
+                // Double tileWidthAtZoomLevelAtEquatorInDegrees = 360.0/Math.pow(2.0, map.getCameraPosition().zoom);
+                Double pixelSizeInMetersAtLatitude = (circumferenceOfEarthInMeters * Math.cos(googleMap.getCameraPosition().target.latitude * (Math.PI / 180.0))) / Math.pow(2.0, googleMap.getCameraPosition().zoom + 8.0);
+                Double tolerance = pixelSizeInMetersAtLatitude * Math.sqrt(2.0) * 10.0;
+
+                Directions.Route rightRoute = null;
+                for(Directions.Route rou : route){
+                    for(Directions.Leg leg : rou.legs){
+                        for(Directions.Leg.Step step : leg.steps){
+                            if (PolyUtil.isLocationOnPath(start, PolyUtil.decode(step.polyline.getPoints()), true, tolerance)) {
+                                rightRoute = rou;
+                                break;
+                            }
+                        }
+                        if (rightRoute!=null) break;
+                    }
+                    if (rightRoute!=null) break;
+                }
+                if (rightRoute!=null){
+                    //show detail
+                    Toast.makeText(getBaseContext(),"" + rightRoute.reportList.size()+ " reports",Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+        });
     }
 
     @Override
@@ -123,6 +163,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     public void onApiResult(Directions result) {
 //        Directions res = result;
 
+        route = new ArrayList<Directions.Route>(Arrays.asList(result.routes));
         ArrayList<LatLng> res = new ArrayList<>();
 
         Random random = new Random();
@@ -142,14 +183,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 //        Toast.makeText(this, String.valueOf(result.routes[0].report),Toast.LENGTH_SHORT).show();
 
         Polyline line = null;
-        LatLng northEast = result.routes[0].
         Log.d("log routes", "" + result.routes.length);
         for (int i = 0; i < result.routes.length; i++) {
             ans.addAll(CheckRoute.countReportOnRoute(result.routes[i],res));
             for (Directions.Leg leg : result.routes[i].legs) {
                 for (Directions.Leg.Step step : leg.steps){
-                    line = mMap.addPolyline(new PolylineOptions().add(new LatLng(step.start_location.getLat(), step.start_location.getLng())
-                            , new LatLng(step.end_location.getLat(), step.end_location.getLng())).width(5).color(Color.RED));
+                    List<LatLng> decodedPath = PolyUtil.decode(step.polyline.points);
+                    Polyline polyline = mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
+                    polyline.setClickable(true);
                 }
             }
         }

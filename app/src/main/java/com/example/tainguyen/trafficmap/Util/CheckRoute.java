@@ -49,7 +49,6 @@ public class CheckRoute {
             double dis = calDis(step.getStart_location(), step.getEnd_location(), reList.get(i));
             if (dis <= MAX_DIS){
                 //Log.d("found report",""+reList.get(i).latitude+","+reList.get(i).longitude);
-                ++reportCount;
                 res.add(reList.get(i));
             }
         }
@@ -58,13 +57,22 @@ public class CheckRoute {
     }
 
     static public ArrayList countReportOnRoute(Directions.Route route, ArrayList<LatLng> reList){
-        route.report = 0;
-        ArrayList<LatLng> res = new ArrayList<>();
+        if (route.reportList == null) route.reportList = new ArrayList<LatLng>();
+
+        route.reportList.clear();
 
         for(int i=0; i<route.legs.length; ++i){
             for(int j=0; j<route.legs[i].steps.length; ++j)
-            //route.report += countReportOnLeg(route.legs[i].steps[j],reList);
-                res.addAll(countReportOnLeg(route.legs[i].steps[j],reList));
+                route.reportList.addAll(countReportOnLeg(route.legs[i].steps[j],reList));
+        }
+        return route.reportList;
+    }
+    static public int onlyCountReportOnRoute(Directions.Route route, ArrayList<LatLng> reList){
+
+        int res = 0;
+        for(int i=0; i<route.legs.length; ++i){
+            for(int j=0; j<route.legs[i].steps.length; ++j)
+                res += countReportOnLeg(route.legs[i].steps[j],reList).size();
         }
         return res;
     }
