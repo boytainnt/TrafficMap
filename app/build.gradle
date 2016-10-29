@@ -6,7 +6,7 @@ android {
     defaultConfig {
         applicationId "com.example.tainguyen.trafficmap"
         minSdkVersion 19
-        targetSdkVersion 23
+        targetSdkVersion 21
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -26,4 +26,6 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.0.0'
     testCompile 'junit:junit:4.12'
+    compile 'com.google.android.gms:play-services:9.8.0'
+    compile 'com.google.maps:google-maps-services:0.1.16'
 }

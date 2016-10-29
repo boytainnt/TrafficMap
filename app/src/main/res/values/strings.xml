@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TrafficMap</string>
+    <string name="map_api_key">AIzaSyAlF7iV1TtZAiLFwCY8TtKvg55L9QfO-JI</string>
 </resources>
